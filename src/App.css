@@ -109,6 +109,101 @@ body {
 .export-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--positive) 12%, transparent); }
 .export-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
+.embed-btn {
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+.embed-btn:hover { background: color-mix(in srgb, var(--text-muted) 12%, transparent); }
+
+/* ── Embed modal ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.modal-close:hover { color: var(--text); }
+
+.modal-description {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+}
+
+.code-block pre {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  white-space: pre;
+  line-height: 1.6;
+}
+
+.copy-btn {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.copy-btn:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.copy-btn.copied {
+  border-color: var(--positive);
+  color: var(--positive);
+}
+
 /* ── Two-column layout ── */
 .app-layout {
   display: grid;
