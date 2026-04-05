@@ -87,29 +87,29 @@ body {
 /* ── Header buttons — unified base ── */
 .header-btn {
   height: 38px;
-  padding: 0 1rem;
+  padding: 0 14px;
   border-radius: 7px;
   border: 1.5px solid var(--text-muted);
   background: transparent;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 5px;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-/* Fixed widths so buttons don't resize when text changes */
-.lang-toggle    { min-width: 62px; }
-.theme-toggle   { min-width: 82px; }
-.compare-toggle { min-width: 158px; }
-.export-btn     { min-width: 118px; }
-.embed-btn      { min-width: 70px; }
-.saves-btn      { min-width: 80px; }
+/* Fixed widths so buttons don't resize when text or language changes */
+.lang-toggle    { width: 62px; }
+.theme-toggle   { width: 90px; }
+.compare-toggle { width: 160px; }
+.export-btn     { width: 120px; }
+.embed-btn      { width: 72px; }
+.saves-btn      { width: 84px; }
 .header-btn:hover {
   background: color-mix(in srgb, var(--text-muted) 12%, transparent);
 }
