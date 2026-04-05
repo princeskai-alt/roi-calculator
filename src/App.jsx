@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import './App.css';
@@ -34,33 +34,39 @@ export default function App() {
   const [compareMode, setCompareMode] = useState(false);
   const [valuesA, setValuesA] = useState(DEFAULTS_A);
   const [valuesB, setValuesB] = useState(DEFAULTS_B);
+  const [isDark, setIsDark] = useState(true);
   const [exporting, setExporting] = useState(false);
   const appRef = useRef(null);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('light', !isDark);
+  }, [isDark]);
 
   async function handleExportPDF() {
     setExporting(true);
     try {
       const canvas = await html2canvas(appRef.current, {
         scale: 2,
-        backgroundColor: '#0d0d1f',
+        backgroundColor: isDark ? '#0d0d1f' : '#f0f4f8',
         useCORS: true,
         logging: false,
       });
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgHeight = (canvas.height * pageWidth) / canvas.width;
-      let y = 0;
-      let remaining = imgHeight;
-      pdf.addImage(imgData, 'PNG', 0, y, pageWidth, imgHeight);
-      remaining -= pageHeight;
-      while (remaining > 0) {
-        y -= pageHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, y, pageWidth, imgHeight);
-        remaining -= pageHeight;
-      }
+
+      // Custom page size = content size exactly → no whitespace
+      const pxToMm = px => px * (25.4 / 96);
+      const widthMm = pxToMm(canvas.width / 2);
+      const heightMm = pxToMm(canvas.height / 2);
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [Math.max(widthMm, heightMm), Math.min(widthMm, heightMm)],
+      });
+
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, pageW, pageH);
       pdf.save('ROI Analysis Report.pdf');
     } finally {
       setExporting(false);
@@ -82,6 +88,12 @@ export default function App() {
           <p>Estimate your return on investment over time</p>
         </div>
         <div className="header-actions">
+          <button
+            className="theme-toggle"
+            onClick={() => setIsDark(v => !v)}
+          >
+            {isDark ? '☀ Light' : '☾ Dark'}
+          </button>
           <button
             className={`compare-toggle ${compareMode ? 'active' : ''}`}
             onClick={() => setCompareMode(v => !v)}
@@ -137,12 +149,13 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <Results {...resultA} accent="#3399ff" />
+            <Results {...resultA} accent={isDark ? '#3399ff' : '#2563eb'} />
           )}
 
           <CashFlowChart
             dataA={resultA.cashFlow}
             dataB={compareMode ? resultB.cashFlow : null}
+            isDark={isDark}
           />
         </div>
       </main>

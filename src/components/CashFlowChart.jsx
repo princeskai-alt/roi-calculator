@@ -29,7 +29,11 @@ function CustomTooltip({ active, payload, label }) {
   );
 }
 
-export default function CashFlowChart({ dataA, dataB }) {
+export default function CashFlowChart({ dataA, dataB, isDark }) {
+  const mutedColor  = isDark ? '#8892a4' : '#64748b';
+  const gridColor   = isDark ? '#2a2a4a' : '#e2e8f0';
+  const refColor    = isDark ? '#4a4a6a' : '#94a3b8';
+
   const data = dataA.map((point, i) => ({
     month: point.month,
     'Scenario A': point.value,
@@ -41,20 +45,18 @@ export default function CashFlowChart({ dataA, dataB }) {
       <h3 className="chart-title">Cumulative Cash Flow</h3>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2a2a4a" />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="month"
-            label={{ value: 'Month', position: 'insideBottomRight', offset: -5, fontSize: 12, fill: '#8892a4' }}
-            tick={{ fontSize: 12, fill: '#8892a4' }}
+            label={{ value: 'Month', position: 'insideBottomRight', offset: -5, fontSize: 12, fill: mutedColor }}
+            tick={{ fontSize: 12, fill: mutedColor }}
           />
-          <YAxis tickFormatter={fmtDollar} tick={{ fontSize: 11, fill: '#8892a4' }} width={60} />
+          <YAxis tickFormatter={fmtDollar} tick={{ fontSize: 11, fill: mutedColor }} width={60} />
           <Tooltip content={<CustomTooltip />} />
           {dataB && (
-            <Legend
-              wrapperStyle={{ fontSize: '0.8rem', paddingTop: '0.5rem', color: '#8892a4' }}
-            />
+            <Legend wrapperStyle={{ fontSize: '0.8rem', paddingTop: '0.5rem', color: mutedColor }} />
           )}
-          <ReferenceLine y={0} stroke="#4a4a6a" strokeDasharray="6 3" strokeWidth={1.5} />
+          <ReferenceLine y={0} stroke={refColor} strokeDasharray="6 3" strokeWidth={1.5} />
           <Line
             type="monotone"
             dataKey="Scenario A"
