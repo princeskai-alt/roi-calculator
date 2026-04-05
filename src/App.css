@@ -58,6 +58,34 @@ body {
   color: #f59e0b;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.export-btn {
+  padding: 0.5rem 1.1rem;
+  border-radius: 7px;
+  border: 1.5px solid #4ade80;
+  background: transparent;
+  color: #4ade80;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: #4ade8022;
+}
+
+.export-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 /* ── Two-column layout ── */
 .app-layout {
   display: grid;

@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import './App.css';
 import InputForm from './components/InputForm';
 import Results from './components/Results';
@@ -32,6 +34,38 @@ export default function App() {
   const [compareMode, setCompareMode] = useState(false);
   const [valuesA, setValuesA] = useState(DEFAULTS_A);
   const [valuesB, setValuesB] = useState(DEFAULTS_B);
+  const [exporting, setExporting] = useState(false);
+  const appRef = useRef(null);
+
+  async function handleExportPDF() {
+    setExporting(true);
+    try {
+      const canvas = await html2canvas(appRef.current, {
+        scale: 2,
+        backgroundColor: '#0d0d1f',
+        useCORS: true,
+        logging: false,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgHeight = (canvas.height * pageWidth) / canvas.width;
+      let y = 0;
+      let remaining = imgHeight;
+      pdf.addImage(imgData, 'PNG', 0, y, pageWidth, imgHeight);
+      remaining -= pageHeight;
+      while (remaining > 0) {
+        y -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, y, pageWidth, imgHeight);
+        remaining -= pageHeight;
+      }
+      pdf.save('ROI Analysis Report.pdf');
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const errorsA = getErrors(valuesA);
   const errorsB = getErrors(valuesB);
@@ -41,18 +75,27 @@ export default function App() {
   const resultB = calculateROI(valuesB);
 
   return (
-    <div className="app">
+    <div className="app" ref={appRef}>
       <header className="app-header">
         <div className="header-left">
           <h1>ROI Calculator</h1>
           <p>Estimate your return on investment over time</p>
         </div>
-        <button
-          className={`compare-toggle ${compareMode ? 'active' : ''}`}
-          onClick={() => setCompareMode(v => !v)}
-        >
-          {compareMode ? '✕ Exit Comparison' : '⇄ Compare Scenarios'}
-        </button>
+        <div className="header-actions">
+          <button
+            className={`compare-toggle ${compareMode ? 'active' : ''}`}
+            onClick={() => setCompareMode(v => !v)}
+          >
+            {compareMode ? '✕ Exit Comparison' : '⇄ Compare Scenarios'}
+          </button>
+          <button
+            className="export-btn"
+            onClick={handleExportPDF}
+            disabled={!isValid || exporting}
+          >
+            {exporting ? 'Exporting…' : '↓ Export PDF'}
+          </button>
+        </div>
       </header>
 
       <main className="app-layout">
