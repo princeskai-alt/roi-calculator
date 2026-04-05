@@ -2,7 +2,8 @@ function fmt(n) {
   return Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 
-export default function Results({ roi, paybackPeriod, totalNetProfit, accent }) {
+export default function Results({ roi, paybackPeriod, totalNetProfit, accent, currencySymbol }) {
+  const sym = currencySymbol || '$';
   const profitSign = totalNetProfit < 0 ? '-' : '';
   const borderStyle = accent ? { borderTop: `3px solid ${accent}` } : {};
 
@@ -25,7 +26,7 @@ export default function Results({ roi, paybackPeriod, totalNetProfit, accent }) 
       <div className="result-card" style={borderStyle}>
         <span className="result-label">Total Net Profit</span>
         <span className={`result-value ${totalNetProfit >= 0 ? 'positive' : 'negative'}`}>
-          {profitSign}${fmt(totalNetProfit)}
+          {profitSign}{sym}{fmt(totalNetProfit)}
         </span>
       </div>
     </div>

@@ -1,4 +1,6 @@
-export default function InputForm({ values, onChange, title, accent, errors = {} }) {
+export default function InputForm({ values, onChange, title, accent, errors = {}, currencySymbol }) {
+  const sym = currencySymbol || '$';
+
   function handle(e) {
     const { name, value } = e.target;
     onChange({ ...values, [name]: Number(value) });
@@ -14,7 +16,7 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
       <h2 className="form-title">Investment Details</h2>
 
       <div className="field">
-        <label>Initial Investment ($)</label>
+        <label>Initial Investment ({sym})</label>
         <input
           type="number"
           name="initialInvestment"
@@ -25,7 +27,7 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
       </div>
 
       <div className="field">
-        <label>Expected Monthly Revenue ($)</label>
+        <label>Expected Monthly Revenue ({sym})</label>
         <input
           type="number"
           name="monthlyRevenue"
@@ -37,7 +39,7 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
       </div>
 
       <div className="field">
-        <label>Monthly Operating Costs ($)</label>
+        <label>Monthly Operating Costs ({sym})</label>
         <input
           type="number"
           name="monthlyCosts"

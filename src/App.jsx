@@ -7,6 +7,14 @@ import Results from './components/Results';
 import CashFlowChart from './components/CashFlowChart';
 import { calculateROI } from './utils/calculations';
 
+const CURRENCIES = [
+  { code: 'USD', symbol: '$' },
+  { code: 'EUR', symbol: '€' },
+  { code: 'GBP', symbol: '£' },
+  { code: 'SGD', symbol: 'S$' },
+  { code: 'HKD', symbol: 'HK$' },
+];
+
 const DEFAULTS_A = {
   initialInvestment: 100000,
   monthlyRevenue: 15000,
@@ -40,16 +48,43 @@ export default function App() {
   const [exporting, setExporting] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [currency, setCurrency] = useState(CURRENCIES[0]);
+  const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
+  const [showSavesMenu, setShowSavesMenu] = useState(false);
+  const [saves, setSaves] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('roi-calculator-saves')) || []; }
+    catch { return []; }
+  });
   const appRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', !isDark);
   }, [isDark]);
 
-  const embedUrl = `${window.location.origin}${window.location.pathname}?embed=true`;
-  const iframeCode = `<iframe\n  src="${embedUrl}"\n  width="100%"\n  height="700"\n  frameborder="0"\n  style="border-radius: 12px; border: 1px solid #e2e8f0; width: 100%;"\n></iframe>`;
+  function handleQuickSave() {
+    const newSave = {
+      id: Date.now(),
+      label: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      compareMode,
+      currency,
+      valuesA,
+      valuesB,
+    };
+    const updated = [newSave, ...saves].slice(0, 3);
+    setSaves(updated);
+    localStorage.setItem('roi-calculator-saves', JSON.stringify(updated));
+    setShowSavesMenu(false);
+  }
 
-  function handleCopy() {
+  function handleLoadSave(save) {
+    setValuesA(save.valuesA);
+    setValuesB(save.valuesB);
+    setCompareMode(save.compareMode ?? false);
+    if (save.currency) setCurrency(save.currency);
+    setShowSavesMenu(false);
+  }
+
+  function handleCopyEmbed() {
     navigator.clipboard.writeText(iframeCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -82,10 +117,12 @@ export default function App() {
     }
   }
 
+  const embedUrl = `${window.location.origin}${window.location.pathname}?embed=true`;
+  const iframeCode = `<iframe\n  src="${embedUrl}"\n  width="100%"\n  height="700"\n  frameborder="0"\n  style="border-radius: 12px; border: 1px solid #e2e8f0; width: 100%;"\n></iframe>`;
+
   const errorsA = getErrors(valuesA);
   const errorsB = getErrors(valuesB);
   const isValid = Object.keys(errorsA).length === 0 && (!compareMode || Object.keys(errorsB).length === 0);
-
   const resultA = calculateROI(valuesA);
   const resultB = calculateROI(valuesB);
 
@@ -97,26 +134,86 @@ export default function App() {
             <h1>ROI Calculator</h1>
             <p>Estimate your return on investment over time</p>
           </div>
+
           <div className="header-actions">
-            <button className="theme-toggle" onClick={() => setIsDark(v => !v)}>
+            {/* Currency switcher */}
+            <div className="dropdown-wrap">
+              <button className="currency-btn header-btn" onClick={() => { setShowCurrencyMenu(v => !v); setShowSavesMenu(false); }}>
+                {currency.symbol} {currency.code} ▾
+              </button>
+              {showCurrencyMenu && (
+                <>
+                  <div className="dropdown-backdrop" onClick={() => setShowCurrencyMenu(false)} />
+                  <div className="dropdown-menu currency-menu">
+                    {CURRENCIES.map(c => (
+                      <button
+                        key={c.code}
+                        className={`currency-option ${c.code === currency.code ? 'active' : ''}`}
+                        onClick={() => { setCurrency(c); setShowCurrencyMenu(false); }}
+                      >
+                        <span className="currency-symbol">{c.symbol}</span>
+                        <span className="currency-code">{c.code}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <button className="theme-toggle header-btn" onClick={() => setIsDark(v => !v)}>
               {isDark ? '☀ Light' : '☾ Dark'}
             </button>
+
             <button
-              className={`compare-toggle ${compareMode ? 'active' : ''}`}
+              className={`compare-toggle header-btn ${compareMode ? 'active' : ''}`}
               onClick={() => setCompareMode(v => !v)}
             >
-              {compareMode ? '✕ Exit Comparison' : '⇄ Compare Scenarios'}
+              {compareMode ? '✕ Exit Comparison' : '⇄ Compare'}
             </button>
+
             <button
-              className="export-btn"
+              className="export-btn header-btn"
               onClick={handleExportPDF}
               disabled={!isValid || exporting}
             >
               {exporting ? 'Exporting…' : '↓ Export PDF'}
             </button>
-            <button className="embed-btn" onClick={() => setShowEmbed(true)}>
+
+            <button className="embed-btn header-btn" onClick={() => setShowEmbed(true)}>
               {'</> Embed'}
             </button>
+
+            {/* Saves */}
+            <div className="dropdown-wrap">
+              <button className="saves-btn header-btn" onClick={() => { setShowSavesMenu(v => !v); setShowCurrencyMenu(false); }}>
+                Saves {saves.length > 0 ? `(${saves.length})` : ''}
+              </button>
+              {showSavesMenu && (
+                <>
+                  <div className="dropdown-backdrop" onClick={() => setShowSavesMenu(false)} />
+                  <div className="dropdown-menu saves-menu">
+                    <button className="quick-save-btn" onClick={handleQuickSave}>
+                      Quick Save
+                    </button>
+                    {saves.length > 0 && <div className="saves-divider" />}
+                    {saves.map(save => (
+                      <div key={save.id} className="save-item">
+                        <div className="save-info">
+                          <span className="save-label">{save.label}</span>
+                          <span className="save-detail">
+                            {save.compareMode ? 'Comparison' : 'Single'} · {save.currency?.code || 'USD'}
+                          </span>
+                        </div>
+                        <button className="load-btn" onClick={() => handleLoadSave(save)}>Load</button>
+                      </div>
+                    ))}
+                    {saves.length === 0 && (
+                      <p className="no-saves">No saves yet. Click Quick Save to store current settings.</p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </header>
       )}
@@ -132,6 +229,7 @@ export default function App() {
             title={compareMode ? 'Scenario A' : null}
             accent="#3399ff"
             errors={errorsA}
+            currencySymbol={currency.symbol}
           />
           {compareMode && (
             <InputForm
@@ -143,6 +241,7 @@ export default function App() {
               title="Scenario B"
               accent="#f59e0b"
               errors={errorsB}
+              currencySymbol={currency.symbol}
             />
           )}
         </div>
@@ -152,21 +251,22 @@ export default function App() {
             <div className="results-compare">
               <div className="scenario-block">
                 <div className="scenario-label" style={{ color: '#3399ff' }}>Scenario A</div>
-                <Results {...resultA} accent="#3399ff" />
+                <Results {...resultA} accent="#3399ff" currencySymbol={currency.symbol} />
               </div>
               <div className="scenario-block">
                 <div className="scenario-label" style={{ color: '#f59e0b' }}>Scenario B</div>
-                <Results {...resultB} accent="#f59e0b" />
+                <Results {...resultB} accent="#f59e0b" currencySymbol={currency.symbol} />
               </div>
             </div>
           ) : (
-            <Results {...resultA} accent={isDark ? '#3399ff' : '#2563eb'} />
+            <Results {...resultA} accent={isDark ? '#3399ff' : '#2563eb'} currencySymbol={currency.symbol} />
           )}
 
           <CashFlowChart
             dataA={resultA.cashFlow}
             dataB={compareMode ? resultB.cashFlow : null}
             isDark={isDark}
+            currencySymbol={currency.symbol}
           />
         </div>
       </main>
@@ -184,10 +284,7 @@ export default function App() {
             <div className="code-block">
               <pre>{iframeCode}</pre>
             </div>
-            <button
-              className={`copy-btn ${copied ? 'copied' : ''}`}
-              onClick={handleCopy}
-            >
+            <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={handleCopyEmbed}>
               {copied ? '✓ Copied!' : 'Copy Code'}
             </button>
           </div>

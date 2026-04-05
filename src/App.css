@@ -115,6 +115,143 @@ body {
 }
 .embed-btn:hover { background: color-mix(in srgb, var(--text-muted) 12%, transparent); }
 
+/* ── Dropdowns (currency + saves) ── */
+.dropdown-wrap {
+  position: relative;
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 101;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px var(--shadow);
+  padding: 0.4rem;
+  min-width: 160px;
+}
+
+/* Currency button + menu */
+.currency-btn {
+  border-color: var(--border);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  min-width: 80px;
+}
+.currency-btn:hover { background: color-mix(in srgb, var(--text-muted) 10%, transparent); }
+
+.currency-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.88rem;
+  text-align: left;
+  transition: background 0.1s;
+}
+.currency-option:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.currency-option.active {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.currency-symbol { font-weight: 700; min-width: 2rem; }
+.currency-code { color: var(--text-muted); font-size: 0.8rem; }
+.currency-option.active .currency-code { color: var(--accent); }
+
+/* Saves button + menu */
+.saves-btn {
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+.saves-btn:hover { background: color-mix(in srgb, var(--text-muted) 10%, transparent); }
+
+.saves-menu { min-width: 240px; }
+
+.quick-save-btn {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  border: 1.5px solid var(--accent);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.quick-save-btn:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+.saves-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.4rem 0;
+}
+
+.save-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 7px;
+  transition: background 0.1s;
+}
+.save-item:hover { background: color-mix(in srgb, var(--text-muted) 8%, transparent); }
+
+.save-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.save-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.save-detail {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.load-btn {
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.load-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.no-saves {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  line-height: 1.5;
+}
+
 /* ── Embed modal ── */
 .modal-overlay {
   position: fixed;
