@@ -102,7 +102,10 @@ export default function App() {
         <div className="forms-column">
           <InputForm
             values={valuesA}
-            onChange={setValuesA}
+            onChange={next => {
+              setValuesA(next);
+              if (compareMode && next.period !== valuesA.period) setValuesB(b => ({ ...b, period: next.period }));
+            }}
             title={compareMode ? 'Scenario A' : null}
             accent="#3399ff"
             errors={errorsA}
@@ -110,7 +113,10 @@ export default function App() {
           {compareMode && (
             <InputForm
               values={valuesB}
-              onChange={setValuesB}
+              onChange={next => {
+                setValuesB(next);
+                if (next.period !== valuesB.period) setValuesA(a => ({ ...a, period: next.period }));
+              }}
               title="Scenario B"
               accent="#f59e0b"
               errors={errorsB}
