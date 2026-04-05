@@ -63,6 +63,10 @@ export default function App() {
     document.documentElement.classList.toggle('light', !isDark);
   }, [isDark]);
 
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   function cycleLang() {
     const next = LANG_CYCLE[(LANG_CYCLE.indexOf(lang) + 1) % LANG_CYCLE.length];
     setLang(next);
