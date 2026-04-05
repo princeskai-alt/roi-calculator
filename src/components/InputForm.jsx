@@ -1,4 +1,4 @@
-export default function InputForm({ values, onChange, title, accent, errors = {}, currencySymbol }) {
+export default function InputForm({ values, onChange, title, accent, errors = {}, currencySymbol, t }) {
   const sym = currencySymbol || '$';
 
   function handle(e) {
@@ -13,10 +13,10 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
           {title}
         </div>
       )}
-      <h2 className="form-title">Investment Details</h2>
+      <h2 className="form-title">{t.investmentDetails}</h2>
 
       <div className="field">
-        <label>Initial Investment ({sym})</label>
+        <label>{t.initialInvestment} ({sym})</label>
         <input
           type="number"
           name="initialInvestment"
@@ -27,7 +27,7 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
       </div>
 
       <div className="field">
-        <label>Expected Monthly Revenue ({sym})</label>
+        <label>{t.monthlyRevenue} ({sym})</label>
         <input
           type="number"
           name="monthlyRevenue"
@@ -39,7 +39,7 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
       </div>
 
       <div className="field">
-        <label>Monthly Operating Costs ({sym})</label>
+        <label>{t.monthlyCosts} ({sym})</label>
         <input
           type="number"
           name="monthlyCosts"
@@ -49,18 +49,18 @@ export default function InputForm({ values, onChange, title, accent, errors = {}
           className={errors.monthlyCosts ? 'input-error' : ''}
         />
         {errors.monthlyCosts && (
-          <span className="error-msg">{errors.monthlyCosts}</span>
+          <span className="error-msg">{t.revenueError}</span>
         )}
       </div>
 
       <div className="field">
-        <label>Calculation Period (months)</label>
+        <label>{t.calcPeriod}</label>
         <select name="period" value={values.period} onChange={handle}>
-          <option value={12}>12 months (1 year)</option>
-          <option value={24}>24 months (2 years)</option>
-          <option value={36}>36 months (3 years)</option>
-          <option value={48}>48 months (4 years)</option>
-          <option value={60}>60 months (5 years)</option>
+          <option value={12}>{t.months12}</option>
+          <option value={24}>{t.months24}</option>
+          <option value={36}>{t.months36}</option>
+          <option value={48}>{t.months48}</option>
+          <option value={60}>{t.months60}</option>
         </select>
       </div>
     </div>

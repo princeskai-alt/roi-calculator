@@ -2,7 +2,7 @@ function fmt(n) {
   return Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 
-export default function Results({ roi, paybackPeriod, totalNetProfit, accent, currencySymbol }) {
+export default function Results({ roi, paybackPeriod, totalNetProfit, accent, currencySymbol, t }) {
   const sym = currencySymbol || '$';
   const profitSign = totalNetProfit < 0 ? '-' : '';
   const borderStyle = accent ? { borderTop: `3px solid ${accent}` } : {};
@@ -10,21 +10,21 @@ export default function Results({ roi, paybackPeriod, totalNetProfit, accent, cu
   return (
     <div className="results-grid">
       <div className="result-card" style={borderStyle}>
-        <span className="result-label">ROI</span>
+        <span className="result-label">{t.roi}</span>
         <span className={`result-value ${roi >= 0 ? 'positive' : 'negative'}`}>
           {roi.toFixed(1)}%
         </span>
       </div>
 
       <div className="result-card" style={borderStyle}>
-        <span className="result-label">Payback Period</span>
+        <span className="result-label">{t.paybackPeriod}</span>
         <span className="result-value">
-          {paybackPeriod === null ? 'Never' : `${paybackPeriod} mo`}
+          {paybackPeriod === null ? t.never : `${paybackPeriod} ${t.mo}`}
         </span>
       </div>
 
       <div className="result-card" style={borderStyle}>
-        <span className="result-label">Total Net Profit</span>
+        <span className="result-label">{t.totalNetProfit}</span>
         <span className={`result-value ${totalNetProfit >= 0 ? 'positive' : 'negative'}`}>
           {profitSign}{sym}{fmt(totalNetProfit)}
         </span>

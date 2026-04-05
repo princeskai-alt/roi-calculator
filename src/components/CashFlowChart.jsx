@@ -30,31 +30,36 @@ function CustomTooltip({ active, payload, label, currencySymbol }) {
   );
 }
 
-export default function CashFlowChart({ dataA, dataB, isDark, currencySymbol }) {
+export default function CashFlowChart({ dataA, dataB, isDark, currencySymbol, t }) {
   const sym = currencySymbol || '$';
   const mutedColor = isDark ? '#8892a4' : '#64748b';
   const gridColor  = isDark ? '#2a2a4a' : '#e2e8f0';
   const refColor   = isDark ? '#4a4a6a' : '#94a3b8';
 
+  const labelA = t?.scenarioA || 'Scenario A';
+  const labelB = t?.scenarioB || 'Scenario B';
+  const chartTitle = t?.cashFlowTitle || 'Cumulative Cash Flow';
+
   const data = dataA.map((point, i) => ({
     month: point.month,
-    'Scenario A': point.value,
-    ...(dataB ? { 'Scenario B': dataB[i]?.value } : {}),
+    [labelA]: point.value,
+    ...(dataB ? { [labelB]: dataB[i]?.value } : {}),
   }));
 
   // Key changes whenever data changes → forces remount → triggers line animation
   const animKey = `${dataA.length}-${dataA[0]?.value ?? 0}-${dataA[dataA.length - 1]?.value ?? 0}` +
-    (dataB ? `-${dataB[dataB.length - 1]?.value ?? 0}` : '');
+    (dataB ? `-${dataB[dataB.length - 1]?.value ?? 0}` : '') +
+    `-${labelA}`;
 
   return (
     <div className="chart-container">
-      <h3 className="chart-title">Cumulative Cash Flow</h3>
+      <h3 className="chart-title">{chartTitle}</h3>
       <ResponsiveContainer key={animKey} width="100%" height={280}>
         <LineChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="month"
-            label={{ value: 'Month', position: 'insideBottomRight', offset: -5, fontSize: 12, fill: mutedColor }}
+            label={{ value: t?.month || 'Month', position: 'insideBottomRight', offset: -5, fontSize: 12, fill: mutedColor }}
             tick={{ fontSize: 12, fill: mutedColor }}
           />
           <YAxis
@@ -69,7 +74,7 @@ export default function CashFlowChart({ dataA, dataB, isDark, currencySymbol }) 
           <ReferenceLine y={0} stroke={refColor} strokeDasharray="6 3" strokeWidth={1.5} />
           <Line
             type="monotone"
-            dataKey="Scenario A"
+            dataKey={labelA}
             stroke="#3399ff"
             strokeWidth={2.5}
             dot={false}
@@ -81,7 +86,7 @@ export default function CashFlowChart({ dataA, dataB, isDark, currencySymbol }) 
           {dataB && (
             <Line
               type="monotone"
-              dataKey="Scenario B"
+              dataKey={labelB}
               stroke="#f59e0b"
               strokeWidth={2.5}
               dot={false}

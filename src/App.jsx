@@ -6,6 +6,7 @@ import InputForm from './components/InputForm';
 import Results from './components/Results';
 import CashFlowChart from './components/CashFlowChart';
 import { calculateROI } from './utils/calculations';
+import { TRANSLATIONS, LANG_CYCLE } from './utils/translations';
 
 const CURRENCIES = [
   { code: 'USD', symbol: '$',  flag: '🇺🇸' },
@@ -33,7 +34,7 @@ function getErrors(values) {
   const errors = {};
   if (values.monthlyRevenue <= values.monthlyCosts) {
     errors.monthlyRevenue = true;
-    errors.monthlyCosts = 'Monthly revenue must exceed monthly costs';
+    errors.monthlyCosts = true;
   }
   return errors;
 }
@@ -45,6 +46,7 @@ export default function App() {
   const [valuesA, setValuesA] = useState(DEFAULTS_A);
   const [valuesB, setValuesB] = useState(DEFAULTS_B);
   const [isDark, setIsDark] = useState(true);
+  const [lang, setLang] = useState(() => localStorage.getItem('roi-lang') || 'en');
   const [exporting, setExporting] = useState(false);
   const [showEmbed, setShowEmbed] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -60,6 +62,14 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('light', !isDark);
   }, [isDark]);
+
+  function cycleLang() {
+    const next = LANG_CYCLE[(LANG_CYCLE.indexOf(lang) + 1) % LANG_CYCLE.length];
+    setLang(next);
+    localStorage.setItem('roi-lang', next);
+  }
+
+  const t = TRANSLATIONS[lang];
 
   function handleQuickSave() {
     const newSave = {
@@ -137,8 +147,8 @@ export default function App() {
       {!isEmbed && (
         <header className="app-header">
           <div className="header-left">
-            <h1>ROI Calculator</h1>
-            <p>Estimate your return on investment over time</p>
+            <h1>{t.appTitle}</h1>
+            <p>{t.appSubtitle}</p>
           </div>
 
           <div className="header-actions">
@@ -167,15 +177,19 @@ export default function App() {
               )}
             </div>
 
+            <button className="lang-toggle header-btn" onClick={cycleLang}>
+              {t.langLabel}
+            </button>
+
             <button className="theme-toggle header-btn" onClick={() => setIsDark(v => !v)}>
-              {isDark ? '☀ Light' : '☾ Dark'}
+              {isDark ? t.lightMode : t.darkMode}
             </button>
 
             <button
               className={`compare-toggle header-btn ${compareMode ? 'active' : ''}`}
               onClick={() => setCompareMode(v => !v)}
             >
-              {compareMode ? '✕ Exit Comparison' : '⇄ Compare'}
+              {compareMode ? t.exitComparison : t.compare}
             </button>
 
             <button
@@ -183,24 +197,24 @@ export default function App() {
               onClick={handleExportPDF}
               disabled={!isValid || exporting}
             >
-              {exporting ? 'Exporting…' : '↓ Export PDF'}
+              {exporting ? t.exporting : t.exportPDF}
             </button>
 
             <button className="embed-btn header-btn" onClick={() => setShowEmbed(true)}>
-              Embed
+              {t.embed}
             </button>
 
             {/* Saves */}
             <div className="dropdown-wrap">
               <button className="saves-btn header-btn" onClick={() => { setShowSavesMenu(v => !v); setShowCurrencyMenu(false); }}>
-                Saves {saves.length > 0 && <span className="saves-count">{saves.length}</span>}
+                {t.saves} {saves.length > 0 && <span className="saves-count">{saves.length}</span>}
               </button>
               {showSavesMenu && (
                 <>
                   <div className="dropdown-backdrop" onClick={() => setShowSavesMenu(false)} />
                   <div className="dropdown-menu saves-menu">
                     <button className="quick-save-btn" onClick={handleQuickSave}>
-                      Quick Save
+                      {t.quickSave}
                     </button>
                     {saves.length > 0 && <div className="saves-divider" />}
                     {saves.map(save => (
@@ -208,17 +222,17 @@ export default function App() {
                         <div className="save-info">
                           <span className="save-label">{save.label}</span>
                           <span className="save-detail">
-                            {save.compareMode ? 'Comparison' : 'Single'} · {save.currency?.code || 'USD'}
+                            {save.compareMode ? t.comparison : t.single} · {save.currency?.code || 'USD'}
                           </span>
                         </div>
                         <div className="save-actions">
-                          <button className="load-btn" onClick={() => handleLoadSave(save)}>Load</button>
+                          <button className="load-btn" onClick={() => handleLoadSave(save)}>{t.load}</button>
                           <button className="delete-save-btn" onClick={() => handleDeleteSave(save.id)} title="Delete">×</button>
                         </div>
                       </div>
                     ))}
                     {saves.length === 0 && (
-                      <p className="no-saves">No saves yet. Click Quick Save to store current settings.</p>
+                      <p className="no-saves">{t.noSaves}</p>
                     )}
                   </div>
                 </>
@@ -236,10 +250,11 @@ export default function App() {
               setValuesA(next);
               if (compareMode && next.period !== valuesA.period) setValuesB(b => ({ ...b, period: next.period }));
             }}
-            title={compareMode ? 'Scenario A' : null}
+            title={compareMode ? t.scenarioA : null}
             accent="#3399ff"
             errors={errorsA}
             currencySymbol={currency.symbol}
+            t={t}
           />
           {compareMode && (
             <InputForm
@@ -248,10 +263,11 @@ export default function App() {
                 setValuesB(next);
                 if (next.period !== valuesB.period) setValuesA(a => ({ ...a, period: next.period }));
               }}
-              title="Scenario B"
+              title={t.scenarioB}
               accent="#f59e0b"
               errors={errorsB}
               currencySymbol={currency.symbol}
+              t={t}
             />
           )}
         </div>
@@ -260,16 +276,16 @@ export default function App() {
           {compareMode ? (
             <div className="results-compare">
               <div className="scenario-block">
-                <div className="scenario-label" style={{ color: '#3399ff' }}>Scenario A</div>
-                <Results {...resultA} accent="#3399ff" currencySymbol={currency.symbol} />
+                <div className="scenario-label" style={{ color: '#3399ff' }}>{t.scenarioA}</div>
+                <Results {...resultA} accent="#3399ff" currencySymbol={currency.symbol} t={t} />
               </div>
               <div className="scenario-block">
-                <div className="scenario-label" style={{ color: '#f59e0b' }}>Scenario B</div>
-                <Results {...resultB} accent="#f59e0b" currencySymbol={currency.symbol} />
+                <div className="scenario-label" style={{ color: '#f59e0b' }}>{t.scenarioB}</div>
+                <Results {...resultB} accent="#f59e0b" currencySymbol={currency.symbol} t={t} />
               </div>
             </div>
           ) : (
-            <Results {...resultA} accent={isDark ? '#3399ff' : '#2563eb'} currencySymbol={currency.symbol} />
+            <Results {...resultA} accent={isDark ? '#3399ff' : '#2563eb'} currencySymbol={currency.symbol} t={t} />
           )}
 
           <CashFlowChart
@@ -277,6 +293,7 @@ export default function App() {
             dataB={compareMode ? resultB.cashFlow : null}
             isDark={isDark}
             currencySymbol={currency.symbol}
+            t={t}
           />
         </div>
       </main>
@@ -285,17 +302,17 @@ export default function App() {
         <div className="modal-overlay" onClick={() => setShowEmbed(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Embed this Calculator</h2>
+              <h2>{t.embedTitle}</h2>
               <button className="modal-close" onClick={() => setShowEmbed(false)}>✕</button>
             </div>
             <p className="modal-description">
-              Copy the code below and paste it into your website's HTML where you want the calculator to appear.
+              {t.embedDescription}
             </p>
             <div className="code-block">
               <pre>{iframeCode}</pre>
             </div>
             <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={handleCopyEmbed}>
-              {copied ? '✓ Copied!' : 'Copy Code'}
+              {copied ? t.copied : t.copyCode}
             </button>
           </div>
         </div>
