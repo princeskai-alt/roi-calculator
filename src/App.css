@@ -74,47 +74,36 @@ body {
   align-items: center;
 }
 
-/* ── Header buttons (shared base) ── */
-.compare-toggle,
-.theme-toggle,
-.export-btn {
-  padding: 0.5rem 1.1rem;
+/* ── Header buttons — unified base ── */
+.header-btn {
+  padding: 0.5rem 1rem;
   border-radius: 7px;
-  border: 1.5px solid;
+  border: 1.5px solid var(--text-muted);
   background: transparent;
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.header-btn:hover {
+  background: color-mix(in srgb, var(--text-muted) 12%, transparent);
 }
 
-.compare-toggle {
-  border-color: var(--accent);
-  color: var(--accent);
+/* Active / special states */
+.compare-toggle.active {
+  border-color: #f59e0b;
+  color: #f59e0b;
 }
-.compare-toggle:hover { background: color-mix(in srgb, var(--accent) 15%, transparent); }
-.compare-toggle.active { border-color: #f59e0b; color: #f59e0b; }
+.compare-toggle.active:hover {
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+}
 
-.theme-toggle {
-  border-color: var(--text-muted);
-  color: var(--text-muted);
-}
-.theme-toggle:hover { background: color-mix(in srgb, var(--text-muted) 12%, transparent); }
-
-.export-btn {
-  border-color: var(--positive);
-  color: var(--positive);
-}
-.export-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--positive) 12%, transparent); }
 .export-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-.embed-btn {
-  background: #6366f1;
-  border-color: #6366f1;
-  color: #fff;
-}
-.embed-btn:hover { background: #4f46e5; border-color: #4f46e5; }
 
 /* ── Dropdowns (currency + saves) ── */
 .dropdown-wrap {
@@ -141,13 +130,7 @@ body {
 }
 
 /* Currency button + menu */
-.currency-btn {
-  border-color: var(--border);
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  min-width: 80px;
-}
-.currency-btn:hover { background: color-mix(in srgb, var(--text-muted) 10%, transparent); }
+.currency-btn { min-width: 90px; }
 
 .currency-option {
   display: flex;
@@ -170,26 +153,19 @@ body {
   color: var(--accent);
   font-weight: 600;
 }
+.currency-flag { font-size: 1rem; line-height: 1; }
 .currency-symbol { font-weight: 700; min-width: 2rem; }
 .currency-code { color: var(--text-muted); font-size: 0.8rem; }
 .currency-option.active .currency-code { color: var(--accent); }
 
 /* Saves button + menu */
-.saves-btn {
-  border-color: #06b6d4;
-  color: #06b6d4;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.saves-btn:hover { background: color-mix(in srgb, #06b6d4 12%, transparent); }
 
 .saves-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #06b6d4;
-  color: #fff;
+  background: var(--text-muted);
+  color: var(--panel);
   font-size: 0.7rem;
   font-weight: 700;
   border-radius: 99px;

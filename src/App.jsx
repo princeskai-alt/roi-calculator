@@ -8,11 +8,11 @@ import CashFlowChart from './components/CashFlowChart';
 import { calculateROI } from './utils/calculations';
 
 const CURRENCIES = [
-  { code: 'USD', symbol: '$' },
-  { code: 'EUR', symbol: '€' },
-  { code: 'GBP', symbol: '£' },
-  { code: 'SGD', symbol: 'S$' },
-  { code: 'HKD', symbol: 'HK$' },
+  { code: 'USD', symbol: '$',  flag: '🇺🇸' },
+  { code: 'EUR', symbol: '€',  flag: '🇪🇺' },
+  { code: 'GBP', symbol: '£',  flag: '🇬🇧' },
+  { code: 'SGD', symbol: 'S$', flag: '🇸🇬' },
+  { code: 'HKD', symbol: 'HK$',flag: '🇭🇰' },
 ];
 
 const DEFAULTS_A = {
@@ -145,7 +145,7 @@ export default function App() {
             {/* Currency switcher */}
             <div className="dropdown-wrap">
               <button className="currency-btn header-btn" onClick={() => { setShowCurrencyMenu(v => !v); setShowSavesMenu(false); }}>
-                {currency.symbol} {currency.code} ▾
+                {currency.flag} {currency.code} ▾
               </button>
               {showCurrencyMenu && (
                 <>
@@ -157,6 +157,7 @@ export default function App() {
                         className={`currency-option ${c.code === currency.code ? 'active' : ''}`}
                         onClick={() => { setCurrency(c); setShowCurrencyMenu(false); }}
                       >
+                        <span className="currency-flag">{c.flag}</span>
                         <span className="currency-symbol">{c.symbol}</span>
                         <span className="currency-code">{c.code}</span>
                       </button>
