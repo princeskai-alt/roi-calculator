@@ -84,6 +84,12 @@ export default function App() {
     setShowSavesMenu(false);
   }
 
+  function handleDeleteSave(id) {
+    const updated = saves.filter(s => s.id !== id);
+    setSaves(updated);
+    localStorage.setItem('roi-calculator-saves', JSON.stringify(updated));
+  }
+
   function handleCopyEmbed() {
     navigator.clipboard.writeText(iframeCode);
     setCopied(true);
@@ -180,13 +186,13 @@ export default function App() {
             </button>
 
             <button className="embed-btn header-btn" onClick={() => setShowEmbed(true)}>
-              {'</> Embed'}
+              Embed
             </button>
 
             {/* Saves */}
             <div className="dropdown-wrap">
               <button className="saves-btn header-btn" onClick={() => { setShowSavesMenu(v => !v); setShowCurrencyMenu(false); }}>
-                Saves {saves.length > 0 ? `(${saves.length})` : ''}
+                Saves {saves.length > 0 && <span className="saves-count">{saves.length}</span>}
               </button>
               {showSavesMenu && (
                 <>
@@ -204,7 +210,10 @@ export default function App() {
                             {save.compareMode ? 'Comparison' : 'Single'} · {save.currency?.code || 'USD'}
                           </span>
                         </div>
-                        <button className="load-btn" onClick={() => handleLoadSave(save)}>Load</button>
+                        <div className="save-actions">
+                          <button className="load-btn" onClick={() => handleLoadSave(save)}>Load</button>
+                          <button className="delete-save-btn" onClick={() => handleDeleteSave(save.id)} title="Delete">×</button>
+                        </div>
                       </div>
                     ))}
                     {saves.length === 0 && (
