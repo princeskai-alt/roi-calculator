@@ -97,9 +97,18 @@ body {
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
+
+/* Fixed widths so buttons don't resize when text changes */
+.lang-toggle    { min-width: 62px; }
+.theme-toggle   { min-width: 82px; }
+.compare-toggle { min-width: 158px; }
+.export-btn     { min-width: 118px; }
+.embed-btn      { min-width: 70px; }
+.saves-btn      { min-width: 80px; }
 .header-btn:hover {
   background: color-mix(in srgb, var(--text-muted) 12%, transparent);
 }
