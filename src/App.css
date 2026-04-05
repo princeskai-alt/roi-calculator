@@ -86,7 +86,8 @@ body {
 
 /* ── Header buttons — unified base ── */
 .header-btn {
-  padding: 0.5rem 1rem;
+  height: 38px;
+  padding: 0 1rem;
   border-radius: 7px;
   border: 1.5px solid var(--text-muted);
   background: transparent;
