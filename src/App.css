@@ -6,6 +6,283 @@
 
 body {
   font-family: system-ui, -apple-system, sans-serif;
-  color: #333;
-  background: #fff;
+  background: #0d0d1f;
+  color: #e8eaf0;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.app-header {
+  background: #1a1a2e;
+  border-bottom: 1px solid #2a2a4a;
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header-left h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3399ff;
+  letter-spacing: -0.02em;
+}
+
+.header-left p {
+  font-size: 0.85rem;
+  color: #8892a4;
+  margin-top: 0.2rem;
+}
+
+.compare-toggle {
+  padding: 0.5rem 1.1rem;
+  border-radius: 7px;
+  border: 1.5px solid #3399ff;
+  background: transparent;
+  color: #3399ff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.compare-toggle:hover {
+  background: #3399ff22;
+}
+
+.compare-toggle.active {
+  background: #3399ff22;
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+/* ── Two-column layout ── */
+.app-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  max-width: 1200px;
+  margin: 2rem auto;
+  gap: 1.5rem;
+  padding: 0 1.5rem 2rem;
+}
+
+.forms-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-self: start;
+}
+
+/* ── Left: Form panel ── */
+.form-panel {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.scenario-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1.5px solid;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3399ff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1.25rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #8892a4;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: #0d0d1f;
+  border: 1px solid #2a2a4a;
+  border-radius: 7px;
+  color: #e8eaf0;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #3399ff;
+}
+
+.field input.input-error {
+  border-color: #f87171;
+}
+
+.error-msg {
+  display: block;
+  color: #f87171;
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.field select option {
+  background: #1a1a2e;
+}
+
+/* ── Right: results + chart ── */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  transition: opacity 0.2s, filter 0.2s;
+}
+
+.right-panel.results-dimmed {
+  opacity: 0.3;
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Comparison results layout ── */
+.results-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.scenario-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scenario-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Results cards ── */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.results-compare .results-grid {
+  grid-template-columns: 1fr;
+}
+
+.result-card {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.result-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #8892a4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.result-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #e8eaf0;
+  letter-spacing: -0.02em;
+}
+
+.result-value.positive { color: #4ade80; }
+.result-value.negative { color: #f87171; }
+
+/* ── Chart ── */
+.chart-container {
+  background: #1a1a2e;
+  border-radius: 12px;
+  padding: 1.5rem 1.5rem 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.chart-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #8892a4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+.chart-tooltip {
+  background: #0d0d1f;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  color: #e8eaf0;
+  line-height: 1.6;
+}
+
+.chart-tooltip .tooltip-month {
+  color: #8892a4;
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
+.chart-tooltip .positive { color: #4ade80; }
+.chart-tooltip .negative { color: #f87171; }
+
+/* recharts axis text override */
+.recharts-cartesian-axis-tick-value {
+  fill: #8892a4;
+}
+
+/* ── Mobile: single column ── */
+@media (max-width: 768px) {
+  .app-header {
+    flex-wrap: wrap;
+  }
+
+  .app-layout {
+    grid-template-columns: 1fr;
+    margin: 1rem auto;
+    padding: 0 1rem 2rem;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-compare {
+    grid-template-columns: 1fr;
+  }
 }
